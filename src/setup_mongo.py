@@ -2,10 +2,10 @@ from pymongo import MongoClient
 import streamlit_authenticator_mongo as stauth
 import secrets
 # Connect to MongoDB
-uri = "mongodb+srv://sweet_magnolias:123Angukanayo123@cluster0.rsqta0a.mongodb.net/"
+uri = "your-mongo-uri"
 client = MongoClient(uri)
-db = client["diseaseDetect"]  # Use your actual database name
-collection = db["DiseaseDetect"]  # Use your actual collection name
+db = client["your-db-name"]  # Use your actual database name
+collection = db["your-collection-name"]  # Use your actual collection name
 
 # Insert a user into the MongoDB collection
 doc = {
