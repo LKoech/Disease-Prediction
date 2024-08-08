@@ -12,12 +12,11 @@ st.write("Welcome to the Disease Detection App! Here we use our Machine Learning
 
 # Define the data
 data = [
-    {"header": "Cardiology", "module": "DiseaseChoice.Cardiology"},
-    {"header": "Endocrinology", "module": "DiseaseChoice.Endocrinology"},
-    {"header": "Gastroenterology", "module": "DiseaseChoice.Gastroenterology"},
-    {"header": "Oncology", "module": "DiseaseChoice.Oncology"},
-
-    {"header": "Infectious Diseases", "module": "DiseaseChoice.InfectiousDiseases"}
+    {"header": "Cardiology", "module": "Pages.Cardiology"},
+    {"header": "Endocrinology", "module": "Pages.Endocrinology"},
+    {"header": "Gastroenterology", "module": "Pages.Gastroenterology"},
+    {"header": "Oncology", "module": "Pages.Oncology"},
+    {"header": "Infectious Diseases", "module": "Pages.InfectiousDiseases"}
 ]
 
 # CSS for styling the cards
