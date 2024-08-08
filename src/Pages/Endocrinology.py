@@ -1,7 +1,12 @@
 import os
 import pickle
 import streamlit as st
-from streamlit_option_menu import option_menu
+
+# Set page configuration
+st.set_page_config(
+    page_title="Endocrinology Disease Detection",
+    page_icon="🧬"
+)
 
 # Function to load models safely
 def load_model(model_path):
@@ -16,108 +21,159 @@ def load_model(model_path):
 # Get the working directory of the main.py
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Paths to the saved models
-diabetes_model_path = os.path.join(working_dir, '..', 'Models', 'diabetes_model.sav')
-liver_disease_model_path = os.path.join(working_dir, '..', 'Models', 'liver_disease_model.sav')
-hypothyroidism_model_path = os.path.join(working_dir, '..', 'Models', 'hypothyroidism_model.sav')
+# Initialize session state if not already set
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = ""
 
-# Load the models
-try:
-    diabetes_model = load_model(diabetes_model_path)
-    liver_disease_model = load_model(liver_disease_model_path)
-    hypothyroidism_model = load_model(hypothyroidism_model_path)
-except Exception as e:
-    st.error(f"Error loading models: {e}")
-    st.stop()
-
+# Display function for Endocrinology section
 def display():
     st.title("Endocrinology")
     st.write("This section covers various aspects of endocrinology, focusing on the detection of common endocrine disorders.")
 
-    # Sidebar for navigation
-    with st.sidebar:
-        selected = option_menu(
-            menu_title='Multiple Disease Prediction System',
-            options=['Diabetes Prediction', 'Liver Disease Prediction', 'Hypothyroidism Prediction'],
-            icons=['activity', 'droplet', 'activity'],
-            menu_icon='hospital-fill',
-            default_index=0
-        )
+# Run the display function for Endocrinology
+display()
 
-    def get_user_inputs(input_labels):
-        inputs = []
-        num_columns = 3  # Number of columns you want
-        columns = st.columns(num_columns)
-        for i, label in enumerate(input_labels):
-            inputs.append(columns[i % num_columns].text_input(label))
-        return inputs
+# Create three columns for the prediction models
+col1, col2, col3 = st.columns(3)
 
-    def handle_prediction(model, user_input, result_message):
+with col1:
+    if st.button("Diabetes Prediction"):
+        st.session_state.current_page = "Diabetes Prediction"
+
+with col2:
+    if st.button("Liver Disease Prediction"):
+        st.session_state.current_page = "Liver Disease Prediction"
+
+with col3:
+    if st.button("Hypothyroidism Prediction"):
+        st.session_state.current_page = "Hypothyroidism Prediction"
+
+# Display the selected page's content
+current_page = st.session_state.current_page
+if current_page:
+    st.write(f"**{current_page}**")
+
+    if current_page == "Diabetes Prediction":
+        diabetes_model_path = os.path.join(working_dir, '..', 'Models', 'diabetes_model.sav')
+
         try:
-            user_input = [float(x) if x not in ['yes', 'no'] else (1 if x == 'yes' else 0) for x in user_input]
-            prediction = model.predict([user_input])
-            if prediction[0] == 1:
-                return f"This person {result_message}"
-            else:
-                return f"This person does not {result_message}"
-        except ValueError:
-            return 'Please enter valid numerical values.'
+            diabetes_model = load_model(diabetes_model_path)
+        except Exception as e:
+            st.error(f"Error loading Diabetes model: {e}")
+            st.stop()
 
-    # Diabetes Prediction Page
-    if selected == 'Diabetes Prediction':
-        st.title('Diabetes Prediction using ML')
+        # Input fields for Diabetes Prediction in columns
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            pregnancies = st.text_input('Number of Pregnancies')
+            blood_pressure = st.text_input('Blood Pressure')
+            bmi = st.text_input('BMI')
 
-        diabetes_labels = [
-            'Number of Pregnancies', 'Glucose Level', 'Blood Pressure value',
-            'Skin Thickness value', 'Insulin Level', 'BMI value',
-            'Diabetes Pedigree Function value', 'Age of the Person'
-        ]
+        with col2:
+            glucose = st.text_input('Glucose Level')
+            skin_thickness = st.text_input('Skin Thickness')
+            diabetes_pedigree_function = st.text_input('Diabetes Pedigree Function')
 
-        user_input = get_user_inputs(diabetes_labels)
+        with col3:
+            insulin = st.text_input('Insulin Level')
+            age = st.text_input('Age')
 
+        diabetes_diagnosis = ''
         if st.button('Diabetes Test Result'):
-            diagnosis = handle_prediction(diabetes_model, user_input, 'is diabetic')
-            st.success(diagnosis)
+            user_input = [pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]
+            try:
+                user_input = [float(x) for x in user_input]
+                diabetes_prediction = diabetes_model.predict([user_input])
+                if diabetes_prediction[0] == 1:
+                    diabetes_diagnosis = 'This person is diabetic'
+                else:
+                    diabetes_diagnosis = 'This person is not diabetic'
+            except ValueError:
+                diabetes_diagnosis = 'Please enter valid numerical values.'
 
-    # Liver Disease Prediction Page
-    if selected == 'Liver Disease Prediction':
-        st.title('Liver Disease Prediction using ML')
+        st.success(diabetes_diagnosis)
 
-        liver_labels = [
-            'Age', 'Gender (1 = male; 0 = female)', 'BMI',
-            'Alcohol Consumption (units per week)', 'Smoking (1 = yes; 0 = no)',
-            'Genetic Risk (1 = yes; 0 = no)', 'Physical Activity (hours per week)',
-            'Diabetes (1 = yes; 0 = no)', 'Hypertension (1 = yes; 0 = no)',
-            'Liver Function Test (1 = abnormal; 0 = normal)'
-        ]
+    elif current_page == "Liver Disease Prediction":
+        liver_disease_model_path = os.path.join(working_dir, '..', 'Models', 'liver_disease_model.sav')
 
-        user_input = get_user_inputs(liver_labels)
+        try:
+            liver_disease_model = load_model(liver_disease_model_path)
+        except Exception as e:
+            st.error(f"Error loading Liver Disease model: {e}")
+            st.stop()
 
+        # Input fields for Liver Disease Prediction in columns
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            age = st.text_input('Age')
+            bmi = st.text_input('BMI')
+            physical_activity = st.text_input('Physical Activity (hours per week)')
+
+        with col2:
+            gender = st.text_input('Gender (1 = male; 0 = female)')
+            alcohol_consumption = st.text_input('Alcohol Consumption (units per week)')
+            diabetes = st.text_input('Diabetes (1 = yes; 0 = no)')
+
+        with col3:
+            smoking = st.text_input('Smoking (1 = yes; 0 = no)')
+            genetic_risk = st.text_input('Genetic Risk (1 = yes; 0 = no)')
+            liver_function_test = st.text_input('Liver Function Test (1 = abnormal; 0 = normal)')
+
+        liver_diagnosis = ''
         if st.button('Liver Disease Test Result'):
-            diagnosis = handle_prediction(liver_disease_model, user_input, 'is at risk of liver disease')
-            st.success(diagnosis)
+            user_input = [age, gender, bmi, alcohol_consumption, smoking, genetic_risk, physical_activity, diabetes, liver_function_test]
+            try:
+                user_input = [float(x) for x in user_input]
+                liver_prediction = liver_disease_model.predict([user_input])
+                if liver_prediction[0] == 1:
+                    liver_diagnosis = 'This person is at risk of liver disease'
+                else:
+                    liver_diagnosis = 'This person is not at risk of liver disease'
+            except ValueError:
+                liver_diagnosis = 'Please enter valid numerical values.'
 
-    # Hypothyroidism Prediction Page
-    if selected == 'Hypothyroidism Prediction':
-        st.title('Hypothyroidism Prediction using ML')
+        st.success(liver_diagnosis)
 
-        hypothyroidism_labels = [
-            'Age', 'Sex (1 = male; 0 = female)', 'On Thyroxine (1 = yes; 0 = no)',
-            'Query on Thyroxine (1 = yes; 0 = no)', 'On Antithyroid Medication (1 = yes; 0 = no)',
-            'Sick (1 = yes; 0 = no)', 'Pregnant (1 = yes; 0 = no)',
-            'Thyroid Surgery (1 = yes; 0 = no)', 'I131 Treatment (1 = yes; 0 = no)',
-            'Query Hypothyroid (1 = yes; 0 = no)', 'Query Hyperthyroid (1 = yes; 0 = no)',
-            'Lithium (1 = yes; 0 = no)', 'Goitre (1 = yes; 0 = no)',
-            'Tumor (1 = yes; 0 = no)', 'Hypopituitary (1 = yes; 0 = no)',
-            'Psych (1 = yes; 0 = no)', 'TSH Measured (1 = yes; 0 = no)',
-            'TSH', 'T3 Measured (1 = yes; 0 = no)', 'T3', 'TT4 Measured (1 = yes; 0 = no)',
-            'TT4', 'T4U Measured (1 = yes; 0 = no)', 'T4U', 'FTI Measured (1 = yes; 0 = no)',
-            'FTI', 'TBG Measured (1 = yes; 0 = no)', 'TBG', 'Referral Source'
-        ]
+    elif current_page == "Hypothyroidism Prediction":
+        hypothyroidism_model_path = os.path.join(working_dir, '..', 'Models', 'hypothyroidism_model.sav')
 
-        user_input = get_user_inputs(hypothyroidism_labels)
+        try:
+            hypothyroidism_model = load_model(hypothyroidism_model_path)
+        except Exception as e:
+            st.error(f"Error loading Hypothyroidism model: {e}")
+            st.stop()
 
+        # Input fields for Hypothyroidism Prediction in columns
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            age = st.text_input('Age')
+            on_thyroxine = st.text_input('On Thyroxine (1 = yes; 0 = no)')
+            sick = st.text_input('Sick (1 = yes; 0 = no)')
+
+        with col2:
+            sex = st.text_input('Sex (1 = male; 0 = female)')
+            query_on_thyroxine = st.text_input('Query on Thyroxine (1 = yes; 0 = no)')
+            pregnant = st.text_input('Pregnant (1 = yes; 0 = no)')
+
+        with col3:
+            on_antithyroid_medication = st.text_input('On Antithyroid Medication (1 = yes; 0 = no)')
+            thyroid_surgery = st.text_input('Thyroid Surgery (1 = yes; 0 = no)')
+            hypothyroid = st.text_input('Query Hypothyroid (1 = yes; 0 = no)')
+
+        hypothyroidism_diagnosis = ''
         if st.button('Hypothyroidism Test Result'):
-            diagnosis = handle_prediction(hypothyroidism_model, user_input, 'is at risk of Hypothyroidism')
-            st.success(diagnosis)
+            user_input = [age, sex, on_thyroxine, query_on_thyroxine, on_antithyroid_medication, sick, pregnant, thyroid_surgery, hypothyroid]
+            try:
+                user_input = [float(x) if x not in ['yes', 'no'] else (1 if x == 'yes' else 0) for x in user_input]
+                hypothyroidism_prediction = hypothyroidism_model.predict([user_input])
+                if hypothyroidism_prediction[0] == 1:
+                    hypothyroidism_diagnosis = 'This person is at risk of Hypothyroidism'
+                else:
+                    hypothyroidism_diagnosis = 'This person is not at risk of Hypothyroidism'
+            except ValueError:
+                hypothyroidism_diagnosis = 'Please enter valid numerical values.'
 
+        st.success(hypothyroidism_diagnosis)
+
+else:
+    st.write("Please select a prediction model by clicking one of the buttons above.")

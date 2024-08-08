@@ -1,5 +1,8 @@
 import streamlit as st
-import importlib
+import streamlit_authenticator_mongo as stauth
+import yaml
+import time
+from pymongo import MongoClient
 
 # Set page configuration
 st.set_page_config(
@@ -7,72 +10,67 @@ st.set_page_config(
     page_icon="⚕️"
 )
 
-st.title("⚕️ Disease Detection")
-st.write("Welcome to the Disease Detection App! Here we use our Machine Learning models to assist in identifying the presence of various diseases.")
+# Load configuration for authentication
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=yaml.SafeLoader)
 
-# Define the data
-data = [
-    {"header": "Cardiology", "module": "Pages.Cardiology"},
-    {"header": "Endocrinology", "module": "Pages.Endocrinology"},
-    {"header": "Gastroenterology", "module": "Pages.Gastroenterology"},
-    {"header": "Oncology", "module": "Pages.Oncology"},
-    {"header": "Infectious Diseases", "module": "Pages.InfectiousDiseases"}
-]
+# Connect to MongoDB
+uri = "mongodb+srv://sweet_magnolias:123Angukanayo123@cluster0.rsqta0a.mongodb.net/"
+client = MongoClient(uri)
+db = client["diseaseDetect"]  # Use your actual database name
+collection = db["DiseaseDetect"]  # Use your actual collection name
 
-# CSS for styling the cards
-st.markdown("""
-    <style>
-    .card {
-        width: 100%;
-        padding-bottom: 100%;
-        margin: 1.5%;
-        background-color: lightblue;
-        border-radius: 8px;
-        position: relative;
-        text-align: center;
-        cursor: pointer;
-        overflow: hidden;
-        transition: transform 0.2s;
-    }
-    .card:hover {
-        transform: scale(1.05);
-    }
-    .card-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 90%;
-        padding: 0 5px;
-        color: black;
-        font-weight: bold;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Initialize the authenticator
+authenticator = stauth.Authenticate(
+    collection,
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days']
+)
 
-# Initialize session state if not already set
-if 'current_page' not in st.session_state:
-    st.session_state.current_page = ""
+# Create a login form
+name, authentication_status, username = authenticator.login('Login', 'main')
 
-# Create the layout with cards
-for i in range(0, len(data), 3):
-    cols = st.columns(3)
-    for col, item in zip(cols, data[i:i+3]):
-        with col:
-            if st.button(item['header']):
-                st.session_state.current_page = item['module']
+if authentication_status:
 
-# Display the current page content
-current_page = st.session_state.current_page
-if current_page:
-    st.write(f"Loading page: {current_page.split('.')[-1]}")
-    try:
-        module = importlib.import_module(current_page)
-        module.display()
-    except ModuleNotFoundError:
-        st.error(f"Module for {current_page.split('.')[-1]} not found.")
-else:
-    st.write("Select a page from the cards above.")
+    # Add the logout button in the sidebar
+    with st.sidebar:
+        authenticator.logout('Logout', 'sidebar', key='unique_key')
+
+    st.title("⚕️ Disease Detection")
+    st.write(
+        f"Welcome  *{name}*  to the Disease Detection App! Here we use our Machine Learning models to assist in identifying the presence of various diseases.")
+
+    # Images for the slideshow
+    IMAGES = [
+        "static/cancer.jpg",
+        "static/bloodplates.jpg",
+        "static/diabetes2.jpg",
+        "static/disease-detect.jpg",
+        "static/heartImage.jpg",
+        "static/liver.png",
+        "static/thyriod.jpg",
+        "static/cancer2.jpg",
+        "static/heart1.jpg",
+        "static/diabetes.jpg",
+        "static/kidney.jpg"
+    ]
+
+    def auto_slide_images(images, interval=2):
+        # Create an empty container to hold the image
+        image_placeholder = st.empty()
+
+        num_images = len(images)
+
+        while True:
+            for i in range(num_images):
+                image_placeholder.image(images[i], use_column_width=True)
+                time.sleep(interval)
+
+    # Call the function to display the images automatically
+    auto_slide_images(IMAGES, interval=2)
+
+elif authentication_status == False:
+    st.error('Username/password is incorrect')
+elif authentication_status == None:
+    st.warning('Please enter your username and password')

@@ -1,0 +1,4 @@
+cookie:
+  expiry_days: 30
+  key: 2acd04894d8e1fad2312a2b71d7bd79a   # Replace with a secure, unique string
+  name: disease_detect_cookie    # Replace with a unique name
