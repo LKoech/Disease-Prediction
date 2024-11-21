@@ -1,20 +1,29 @@
 import streamlit as st
 import streamlit_authenticator_mongo as stauth
+import os  # Make sure to import the os module
 import yaml
-import os
+import time
 from pymongo import MongoClient
+
+# Debugging: List the current working directory
+print("Current working directory:", os.getcwd())
+
+# Debugging: List all files in the working directory
+print("Files in the working directory:", os.listdir(os.getcwd()))
 
 # Set page configuration
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Load configuration for authentication
-config_path = os.path.join('src', 'Disease-Prediction-App/src/config.yaml')
-if not os.path.exists(config_path):
-    st.error("Configuration file not found!")
-    st.stop()
+config_path = 'Disease-Prediction-App/src/config.yaml'  # Adjust the path accordingly
 
-with open(config_path) as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
+# Debugging: Check if the file exists
+if os.path.exists(config_path):
+    with open(config_path) as file:
+        config = yaml.load(file, Loader=yaml.SafeLoader)
+else:
+    print(f"Error: The file {config_path} was not found.")
+    # Handle the error gracefully in your app
 
 # Connect to MongoDB
 uri = "mongodb+srv://seremharriet:1234@diseasedetectioncluster.s54mk.mongodb.net/?retryWrites=true&w=majority&appName=DiseaseDetectionCluster"
@@ -35,31 +44,44 @@ name, authentication_status, username = authenticator.login('Login', 'main')
 
 # Handle authentication status
 if authentication_status:
-    # If authenticated, set a session state variable
-    st.session_state['authenticated'] = True
-
-    # Sidebar for navigation
+    # If authenticated, display the app content
     with st.sidebar:
         authenticator.logout('Logout', 'sidebar', key='unique_key')
-        page = st.radio("Navigate", ["Home", "About", "Contact"])
 
-    # Display content based on selected page
-    if page == "Home":
-        st.title("⚕️ Disease Detection")
-        st.write(f"Welcome, *{name}*, to the Disease Detection App!")
-        # Add more content for the home page
-        st.write("This is the home page.")
+    st.title("⚕️ Disease Detection")
+    st.write(f"Welcome *{name}* to the Disease Detection App!")
 
-    elif page == "About":
-        st.title("About Us")
-        st.write("This app helps detect diseases using AI/ML models.")
+    # Add content, like images or other app features here
+    IMAGES = [
+        "static/cancer.jpg",
+        "static/bloodplates.jpg",
+        "static/diabetes2.jpg",
+        "static/disease-detect.jpg",
+        "static/heartImage.jpg",
+        "static/liver.png",
+        "static/thyriod.jpg",
+        "static/cancer2.jpg",
+        "static/heart1.jpg",
+        "static/diabetes.jpg",
+        "static/kidney.jpg"
+    ]
 
-    elif page == "Contact":
-        st.title("Contact Us")
-        st.write("Reach out to us at support@diseasedetection.com")
+    def auto_slide_images(images, interval=2):
+        image_placeholder = st.empty()
+        num_images = len(images)
+
+        while True:
+            for i in range(num_images):
+                image_placeholder.image(images[i], use_column_width=True)
+                time.sleep(interval)
+
+    # Call the function to display images automatically
+    auto_slide_images(IMAGES, interval=2)
 
 elif authentication_status == False:
+    # If login failed (invalid username or password)
     st.error('Username/password is incorrect')
 
 elif authentication_status == None:
-    st.warning('Please enter your username and password')
+    # If no credentials entered
+    st.warning('Please enter correct username and password')
