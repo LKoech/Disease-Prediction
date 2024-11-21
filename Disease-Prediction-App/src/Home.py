@@ -1,8 +1,14 @@
 import streamlit as st
 import streamlit_authenticator_mongo as stauth
+import os
 import yaml
 import time
 from pymongo import MongoClient
+
+print("Current working directory:", os.getcwd())
+
+# Debugging: List all files in the current working directory
+print("Files in the working directory:", os.listdir(os.getcwd()))
 
 # Set page configuration
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
