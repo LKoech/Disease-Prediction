@@ -8,7 +8,7 @@ from pymongo import MongoClient
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Load configuration for authentication
-with open('config.yaml') as file:
+with open('config.yaml', 'r') as file:
     config = yaml.load(file, Loader=yaml.SafeLoader)
 
 # Connect to MongoDB
