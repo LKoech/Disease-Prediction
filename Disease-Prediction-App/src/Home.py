@@ -14,7 +14,7 @@ print("Files in the working directory:", os.listdir(os.getcwd()))
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Load configuration for authentication
-with open('Disease-Prediction-App/config.yaml', 'r') as file:
+with open('Disease-Prediction-App/src/config.yaml') as file:
     config = yaml.load(file, Loader=yaml.SafeLoader)
 
 # Connect to MongoDB
