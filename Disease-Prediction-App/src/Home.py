@@ -8,7 +8,7 @@ from pymongo import MongoClient
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Load configuration for authentication
-config_path = os.path.join('src', 'config.yaml')
+config_path = os.path.join('src', 'Disease-Prediction-App/src/config.yaml')
 if not os.path.exists(config_path):
     st.error("Configuration file not found!")
     st.stop()
