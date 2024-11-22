@@ -5,13 +5,19 @@ import yaml
 import time
 from pymongo import MongoClient
 
-
 # Set page configuration
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
+# Dynamically get the path to the config file
+config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+
 # Load configuration for authentication
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
+try:
+    with open(config_path, 'r') as file:
+        config = yaml.load(file, Loader=yaml.SafeLoader)
+except FileNotFoundError:
+    st.error(f"The config.yaml file was not found at the expected path: {config_path}")
+    st.stop()  # Stop the app if the file is not found
 
 # Connect to MongoDB
 uri = "mongodb+srv://seremharriet:1234@diseasedetectioncluster.s54mk.mongodb.net/?retryWrites=true&w=majority&appName=DiseaseDetectionCluster"
