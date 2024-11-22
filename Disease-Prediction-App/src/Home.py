@@ -1,29 +1,17 @@
 import streamlit as st
 import streamlit_authenticator_mongo as stauth
-import os  # Make sure to import the os module
+import os
 import yaml
 import time
 from pymongo import MongoClient
 
-# Debugging: List the current working directory
-print("Current working directory:", os.getcwd())
-
-# Debugging: List all files in the working directory
-print("Files in the working directory:", os.listdir(os.getcwd()))
 
 # Set page configuration
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Load configuration for authentication
-config_path = 'Disease-Prediction-App/src/config.yaml'  # Adjust the path accordingly
-
-# Debugging: Check if the file exists
-if os.path.exists(config_path):
-    with open(config_path) as file:
-        config = yaml.load(file, Loader=yaml.SafeLoader)
-else:
-    print(f"Error: The file {config_path} was not found.")
-    # Handle the error gracefully in your app
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=yaml.SafeLoader)
 
 # Connect to MongoDB
 uri = "mongodb+srv://seremharriet:1234@diseasedetectioncluster.s54mk.mongodb.net/?retryWrites=true&w=majority&appName=DiseaseDetectionCluster"
