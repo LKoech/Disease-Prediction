@@ -1,0 +1,12 @@
+{
+    "builds": [
+      {
+        "src": "src/Home.py",  
+        "use": "@vercel/python",
+        "config": {
+          "runtime": "python3.12"
+        }
+      }
+    ]
+  }
+  
