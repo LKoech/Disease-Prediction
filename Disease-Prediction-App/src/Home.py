@@ -9,8 +9,7 @@ from pymongo import MongoClient
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Dynamically get the path to the config file
-current_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(current_dir, 'config.yaml')
+config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
 
 # Load configuration for authentication
 try:
@@ -46,7 +45,8 @@ if authentication_status:
     st.title("⚕️ Disease Detection")
     st.write(f"Welcome *{name}* to the Disease Detection App!")
 
-    # Dynamically construct the paths for images
+    # Dynamically construct paths to images
+    current_dir = os.path.dirname(os.path.abspath(__file__))
     IMAGES = [
         os.path.join(current_dir, "static", "cancer.jpg"),
         os.path.join(current_dir, "static", "bloodplates.jpg"),
@@ -58,21 +58,23 @@ if authentication_status:
         os.path.join(current_dir, "static", "cancer2.jpg"),
         os.path.join(current_dir, "static", "heart1.jpg"),
         os.path.join(current_dir, "static", "diabetes.jpg"),
-        os.path.join(current_dir, "static", "kidney.jpg")
+        os.path.join(current_dir, "static", "kidney.jpg"),
     ]
 
-    # Function to auto-slide images
-    def auto_slide_images(images, interval=2):
-        image_placeholder = st.empty()
+    def display_image_carousel(images, interval=2):
+        """
+        Function to display a carousel of images.
+        """
+        placeholder = st.empty()  # Create a placeholder for images
         num_images = len(images)
 
-        while True:
+        for _ in range(num_images * 3):  # Loop through images multiple times
             for i in range(num_images):
-                image_placeholder.image(images[i], use_column_width=True)
-                time.sleep(interval)
+                placeholder.image(images[i], use_column_width=True)
+                time.sleep(interval)  # Wait for the specified interval before showing the next image
 
-    # Call the function to display images automatically
-    auto_slide_images(IMAGES, interval=2)
+    # Call the carousel function
+    display_image_carousel(IMAGES, interval=2)
 
 elif authentication_status == False:
     # If login failed (invalid username or password)
@@ -80,4 +82,4 @@ elif authentication_status == False:
 
 elif authentication_status == None:
     # If no credentials entered
-    st.warning('Please enter correct username and password')
+    st.warning('Please enter your username and password')
