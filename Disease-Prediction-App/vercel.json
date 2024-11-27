@@ -1,11 +1,18 @@
 {
+    "version": 2,
     "builds": [
       {
-        "src": "src/Home.py",  
+        "src": "src/Home.py",
         "use": "@vercel/python",
         "config": {
           "runtime": "python3.12"
         }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/src/Home.py"
       }
     ]
   }
