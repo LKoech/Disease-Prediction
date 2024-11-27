@@ -9,7 +9,8 @@ from pymongo import MongoClient
 st.set_page_config(page_title="Disease Detection", page_icon="⚕️")
 
 # Dynamically get the path to the config file
-config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(current_dir, 'config.yaml')
 
 # Load configuration for authentication
 try:
@@ -45,21 +46,22 @@ if authentication_status:
     st.title("⚕️ Disease Detection")
     st.write(f"Welcome *{name}* to the Disease Detection App!")
 
-    # Add content, like images or other app features here
+    # Dynamically construct the paths for images
     IMAGES = [
-        "static/cancer.jpg",
-        "static/bloodplates.jpg",
-        "static/diabetes2.jpg",
-        "static/disease-detect.jpg",
-        "static/heartImage.jpg",
-        "static/liver.png",
-        "static/thyriod.jpg",
-        "static/cancer2.jpg",
-        "static/heart1.jpg",
-        "static/diabetes.jpg",
-        "static/kidney.jpg"
+        os.path.join(current_dir, "static", "cancer.jpg"),
+        os.path.join(current_dir, "static", "bloodplates.jpg"),
+        os.path.join(current_dir, "static", "diabetes2.jpg"),
+        os.path.join(current_dir, "static", "disease-detect.jpg"),
+        os.path.join(current_dir, "static", "heartImage.jpg"),
+        os.path.join(current_dir, "static", "liver.png"),
+        os.path.join(current_dir, "static", "thyriod.jpg"),
+        os.path.join(current_dir, "static", "cancer2.jpg"),
+        os.path.join(current_dir, "static", "heart1.jpg"),
+        os.path.join(current_dir, "static", "diabetes.jpg"),
+        os.path.join(current_dir, "static", "kidney.jpg")
     ]
 
+    # Function to auto-slide images
     def auto_slide_images(images, interval=2):
         image_placeholder = st.empty()
         num_images = len(images)
