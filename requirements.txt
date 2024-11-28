@@ -2,3 +2,4 @@ streamlit
 streamlit-authenticator-mongo
 pymongo
 PyYAML
+pytest
