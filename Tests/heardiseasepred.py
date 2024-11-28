@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 print("PYTHONPATH:", sys.path)
 
-from src.Pages.Cardiology import load_model
+from ..src.Pages.Cardiology import load_model
 
 def test_heart_disease_prediction(mocker):
     """Test prediction logic for Heart Disease."""
