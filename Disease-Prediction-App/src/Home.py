@@ -45,36 +45,32 @@ if authentication_status:
     st.title("⚕️ Disease Detection")
     st.write(f"Welcome *{name}* to the Disease Detection App!")
 
-    # Dynamically construct paths to images
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # Add content, like images or other app features here
     IMAGES = [
-        os.path.join(current_dir, "static", "cancer.jpg"),
-        os.path.join(current_dir, "static", "bloodplates.jpg"),
-        os.path.join(current_dir, "static", "diabetes2.jpg"),
-        os.path.join(current_dir, "static", "disease-detect.jpg"),
-        os.path.join(current_dir, "static", "heartImage.jpg"),
-        os.path.join(current_dir, "static", "liver.png"),
-        os.path.join(current_dir, "static", "thyriod.jpg"),
-        os.path.join(current_dir, "static", "cancer2.jpg"),
-        os.path.join(current_dir, "static", "heart1.jpg"),
-        os.path.join(current_dir, "static", "diabetes.jpg"),
-        os.path.join(current_dir, "static", "kidney.jpg"),
+        "static/cancer.jpg",  
+        "static/bloodplates.jpg",
+        "static/diabetes2.jpg",
+        "static/disease-detect.jpg",
+        "static/heartImage.jpg",
+        "static/liver.png",
+        "static/thyriod.jpg",
+        "static/cancer2.jpg",
+        "static/heart1.jpg",
+        "static/diabetes.jpg",
+        "static/kidney.jpg"
     ]
 
-    def display_image_carousel(images, interval=2):
-        """
-        Function to display a carousel of images.
-        """
-        placeholder = st.empty()  # Create a placeholder for images
+    def auto_slide_images(images, interval=2):
+        image_placeholder = st.empty()
         num_images = len(images)
 
-        for _ in range(num_images * 3):  # Loop through images multiple times
+        while True:
             for i in range(num_images):
-                placeholder.image(images[i], use_column_width=True)
-                time.sleep(interval)  # Wait for the specified interval before showing the next image
+                image_placeholder.image(images[i], use_column_width=True)
+                time.sleep(interval)
 
-    # Call the carousel function
-    display_image_carousel(IMAGES, interval=2)
+    # Call the function to display images automatically
+    auto_slide_images(IMAGES, interval=2)
 
 elif authentication_status == False:
     # If login failed (invalid username or password)
@@ -82,4 +78,4 @@ elif authentication_status == False:
 
 elif authentication_status == None:
     # If no credentials entered
-    st.warning('Please enter your username and password')
+    st.warning('Please enter correct username and password')
