@@ -28,6 +28,6 @@ jobs:
 
     - name: Run Tests
       env:
-        PYTHONPATH: src  # Add the src directory to PYTHONPATH
+        PYTHONPATH: ./src  # Add the src directory to PYTHONPATH
       run: |
         pytest
