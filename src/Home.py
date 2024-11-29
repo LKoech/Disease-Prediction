@@ -3,6 +3,10 @@ import streamlit_authenticator_mongo as stauth
 import yaml
 import time
 from pymongo import MongoClient
+# Set up environment variables for Streamlit
+os.environ["STREAMLIT_SERVER_HEADLESS"] = "true"
+os.environ["STREAMLIT_SERVER_PORT"] = os.getenv("PORT", "8501")
+os.environ["STREAMLIT_SERVER_ADDRESS"] = "0.0.0.0"
 
 # Set page configuration
 st.set_page_config(
