@@ -3,3 +3,5 @@ streamlit-authenticator-mongo
 pymongo
 PyYAML
 pytest
+azure-storage-blob  # Example dependency if using Azure storage
+
