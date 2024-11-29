@@ -1,0 +1,44 @@
+name: Deploy Streamlit App to Azure VM
+
+env:
+  VM_USERNAME: LKoech         # Username for the Azure VM
+  VM_HOST: 102.37.215.133       # Replace with your Azure VM's public IP
+  VM_PORT: 8080                  # Port for Streamlit (default is 8080)
+
+on:
+  push:
+    branches: [ "develop" ]         # Trigger deployment on push to main branch
+  workflow_dispatch:             # Allow manual workflow triggers
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Deploy to Azure VM
+        env:
+          SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
+        run: |
+          echo "${SSH_KEY}" > ssh_key
+          chmod 600 ssh_key
+
+          # Transfer app files to the Azure VM
+          scp -i ssh_key -o StrictHostKeyChecking=no app.py requirements.txt ${{ env.VM_USERNAME }}@${{ env.VM_HOST }}:~
+
+          # SSH into the VM and set up the environment
+          ssh -i ssh_key -o StrictHostKeyChecking=no ${{ env.VM_USERNAME }}@${{ env.VM_HOST }} << 'EOF'
+            sudo apt update && sudo apt install python3 python3-pip -y
+            pip3 install -r requirements.txt
+            nohup streamlit run app.py --server.port ${{ env.VM_PORT }} --server.address 0.0.0.0 > streamlit.log 2>&1 &
+          EOF
