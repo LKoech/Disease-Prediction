@@ -7,7 +7,7 @@ env:
 
 on:
   push:
-    branches: [ "main" ]         # Trigger deployment on push to main branch
+    branches: [ "develop" ]         # Trigger deployment on push to main branch
   workflow_dispatch:             # Allow manual workflow triggers
 
 permissions:
